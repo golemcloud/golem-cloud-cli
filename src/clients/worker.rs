@@ -310,7 +310,7 @@ impl<C: golem_cloud_client::api::WorkerClient + Sync + Send> WorkerClient for Wo
         let read_res = read.for_each(|message_or_error| async {
             match message_or_error {
                 Err(error) => {
-                    print!("Error reading message: {}", error);
+                    debug!("Error reading message: {}", error);
                 }
                 Ok(message) => {
                     let instance_connect_msg = match message {
@@ -325,20 +325,20 @@ impl<C: golem_cloud_client::api::WorkerClient + Sync + Send> WorkerClient for Wo
                             Some(parsed.unwrap()) // TODO: error handling
                         }
                         Message::Ping(_) => {
-                            debug!("Ignore ping");
+                            debug!("Ping received from server");
                             None
                         }
                         Message::Pong(_) => {
-                            debug!("Ignore pong");
+                            debug!("Pong received from server");
                             None
                         }
                         Message::Close(details) => {
                             match details {
                                 Some(closed_frame) => {
-                                    print!("Connection Closed: {}", closed_frame);
+                                    info!("Connection Closed: {}", closed_frame);
                                 }
                                 None => {
-                                    print!("Connection Closed");
+                                    info!("Connection Closed");
                                 }
                             }
                             None
