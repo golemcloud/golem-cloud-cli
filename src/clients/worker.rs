@@ -359,10 +359,10 @@ impl<C: golem_cloud_client::api::WorkerClient + Sync + Send> WorkerClient for Wo
                                 print!("{message}")
                             }
                             WorkerEvent::Log(Log {
-                                                 level,
-                                                 context,
-                                                 message,
-                                             }) => match level {
+                                level,
+                                context,
+                                message,
+                            }) => match level {
                                 0 => tracing::trace!(message, context = context),
                                 1 => tracing::debug!(message, context = context),
                                 2 => tracing::info!(message, context = context),
