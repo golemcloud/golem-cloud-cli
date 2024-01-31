@@ -186,8 +186,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 async fn async_main(cmd: GolemCommand) -> Result<(), Box<dyn std::error::Error>> {
-    let url_str =
-        std::env::var("GOLEM_BASE_URL").unwrap_or("https://release.api.golem.cloud/".to_string());
+    let url_str = std::env::var("GOLEM_CLOUD_BASE_URL")
+        .ok()
+        .or_else(|| std::env::var("GOLEM_BASE_URL").ok())
+        .unwrap_or("https://release.api.golem.cloud/".to_string());
     let gateway_url_str = std::env::var("GOLEM_GATEWAY_BASE_URL").unwrap_or(url_str.clone());
     let url = Url::parse(&url_str).unwrap();
     let gateway_url = Url::parse(&gateway_url_str).unwrap();
