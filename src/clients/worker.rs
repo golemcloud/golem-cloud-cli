@@ -306,7 +306,7 @@ impl<C: golem_cloud_client::api::WorkerClient + Sync + Send> WorkerClient for Wo
                 cnt += 1;
             }
         });
-        
+
         let read_res = read.for_each(|message_or_error| async {
             match message_or_error {
                 Err(error) => {
