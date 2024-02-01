@@ -15,7 +15,7 @@ use tokio::{task, time};
 use tokio_tungstenite::tungstenite::client::IntoClientRequest;
 use tokio_tungstenite::tungstenite::protocol::Message;
 use tokio_tungstenite::{connect_async_tls_with_config, Connector};
-use tracing::{debug, info};
+use tracing::{debug, info, error};
 
 use crate::model::{GolemError, InvocationKey, RawTemplateId};
 use crate::WorkerName;
@@ -335,7 +335,7 @@ impl<C: golem_cloud_client::api::WorkerClient + Sync + Send> WorkerClient for Wo
                         Message::Close(details) => {
                             match details {
                                 Some(closed_frame) => {
-                                    info!("Connection Closed: {}", closed_frame);
+                                    error!("Connection Closed: {}", closed_frame);
                                 }
                                 None => {
                                     info!("Connection Closed");
