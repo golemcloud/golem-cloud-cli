@@ -15,7 +15,7 @@ use tokio::{task, time};
 use tokio_tungstenite::tungstenite::client::IntoClientRequest;
 use tokio_tungstenite::tungstenite::protocol::Message;
 use tokio_tungstenite::{connect_async_tls_with_config, Connector};
-use tracing::{debug, info};
+use tracing::{debug, error, info};
 
 use crate::model::{GolemError, InvocationKey, RawTemplateId};
 use crate::WorkerName;
@@ -249,12 +249,13 @@ impl<C: golem_cloud_client::api::WorkerClient + Sync + Send> WorkerClient for Wo
             .into_client_request()
             .map_err(|e| GolemError(format!("Can't create request: {e}")))?;
         let headers = request.headers_mut();
-        headers.insert(
-            "Authorization",
-            format!("Bearer {}", self.context.bearer_token().unwrap())
-                .parse()
-                .unwrap(),
-        );
+
+        if let Some(token) = self.context.bearer_token() {
+            headers.insert(
+                "Authorization",
+                format!("Bearer {}", token).parse().unwrap(),
+            );
+        }
 
         let connector = if self.allow_insecure {
             Some(Connector::NativeTls(
@@ -270,7 +271,22 @@ impl<C: golem_cloud_client::api::WorkerClient + Sync + Send> WorkerClient for Wo
 
         let (ws_stream, _) = connect_async_tls_with_config(request, None, false, connector)
             .await
-            .map_err(|e| GolemError(format!("Failed websocket: {e}")))?;
+            .map_err(|e| match e {
+                tungstenite::error::Error::Http(http_error_response) => {
+                    match http_error_response.body().clone() {
+                        Some(body) => GolemError(format!(
+                            "Failed Websocket. Http error: {}, {}",
+                            http_error_response.status(),
+                            String::from_utf8_lossy(&body)
+                        )),
+                        None => GolemError(format!(
+                            "Failed Websocket. Http error: {}",
+                            http_error_response.status()
+                        )),
+                    }
+                }
+                _ => GolemError(format!("Failed Websocket. Error: {}", e)),
+            })?;
 
         let (mut write, read) = ws_stream.split();
 
@@ -291,59 +307,71 @@ impl<C: golem_cloud_client::api::WorkerClient + Sync + Send> WorkerClient for Wo
             }
         });
 
-        let read_res = read.for_each(|message| async {
-            let message: Message = message.unwrap();
+        let read_res = read.for_each(|message_or_error| async {
+            match message_or_error {
+                Err(error) => {
+                    debug!("Error reading message: {}", error);
+                }
+                Ok(message) => {
+                    let instance_connect_msg = match message {
+                        Message::Text(str) => {
+                            let parsed: serde_json::Result<InstanceConnectMessage> =
+                                serde_json::from_str(&str);
+                            Some(parsed.unwrap()) // TODO: error handling
+                        }
+                        Message::Binary(data) => {
+                            let parsed: serde_json::Result<InstanceConnectMessage> =
+                                serde_json::from_slice(&data);
+                            Some(parsed.unwrap()) // TODO: error handling
+                        }
+                        Message::Ping(_) => {
+                            debug!("Ping received from server");
+                            None
+                        }
+                        Message::Pong(_) => {
+                            debug!("Pong received from server");
+                            None
+                        }
+                        Message::Close(details) => {
+                            match details {
+                                Some(closed_frame) => {
+                                    error!("Connection Closed: {}", closed_frame);
+                                }
+                                None => {
+                                    info!("Connection Closed");
+                                }
+                            }
+                            None
+                        }
+                        Message::Frame(_) => {
+                            info!("Ignore unexpected frame");
+                            None
+                        }
+                    };
 
-            let msg = match message {
-                Message::Text(str) => {
-                    let parsed: serde_json::Result<InstanceConnectMessage> =
-                        serde_json::from_str(&str);
-                    Some(parsed.unwrap()) // TODO: error handling
-                }
-                Message::Binary(data) => {
-                    let parsed: serde_json::Result<InstanceConnectMessage> =
-                        serde_json::from_slice(&data);
-                    Some(parsed.unwrap()) // TODO: error handling
-                }
-                Message::Ping(_) => {
-                    debug!("Ignore ping");
-                    None
-                }
-                Message::Pong(_) => {
-                    debug!("Ignore pong");
-                    None
-                }
-                Message::Close(_) => {
-                    info!("Ignore unexpected close");
-                    None
-                }
-                Message::Frame(_) => {
-                    info!("Ignore unexpected frame");
-                    None
-                }
-            };
-
-            match msg {
-                None => {}
-                Some(msg) => match msg.event {
-                    WorkerEvent::Stdout(StdOutLog { message }) => {
-                        print!("{message}")
+                    match instance_connect_msg {
+                        None => {}
+                        Some(msg) => match msg.event {
+                            WorkerEvent::Stdout(StdOutLog { message }) => {
+                                print!("{message}")
+                            }
+                            WorkerEvent::Stderr(StdErrLog { message }) => {
+                                print!("{message}")
+                            }
+                            WorkerEvent::Log(Log {
+                                level,
+                                context,
+                                message,
+                            }) => match level {
+                                0 => tracing::trace!(message, context = context),
+                                1 => tracing::debug!(message, context = context),
+                                2 => tracing::info!(message, context = context),
+                                3 => tracing::warn!(message, context = context),
+                                _ => tracing::error!(message, context = context),
+                            },
+                        },
                     }
-                    WorkerEvent::Stderr(StdErrLog { message }) => {
-                        print!("{message}")
-                    }
-                    WorkerEvent::Log(Log {
-                        level,
-                        context,
-                        message,
-                    }) => match level {
-                        0 => tracing::trace!(message, context = context),
-                        1 => tracing::debug!(message, context = context),
-                        2 => tracing::info!(message, context = context),
-                        3 => tracing::warn!(message, context = context),
-                        _ => tracing::error!(message, context = context),
-                    },
-                },
+                }
             }
         });
 
