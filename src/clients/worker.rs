@@ -15,7 +15,7 @@ use tokio::{task, time};
 use tokio_tungstenite::tungstenite::client::IntoClientRequest;
 use tokio_tungstenite::tungstenite::protocol::Message;
 use tokio_tungstenite::{connect_async_tls_with_config, Connector};
-use tracing::{debug, info, error};
+use tracing::{debug, error, info};
 
 use crate::model::{GolemError, InvocationKey, RawTemplateId};
 use crate::WorkerName;
