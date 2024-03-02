@@ -150,6 +150,11 @@ enum Command {
         #[command(subcommand)]
         subcommand: GatewaySubcommand,
     },
+    #[cfg(feature = "stubgen")]
+    Stubgen {
+        #[command(subcommand)]
+        subcommand: golem_wasm_rpc_stubgen::Command,
+    },
 }
 
 #[derive(Parser, Debug)]
@@ -360,6 +365,31 @@ async fn async_main(cmd: GolemCommand) -> Result<(), Box<dyn std::error::Error>>
             examples::process_list_examples(min_tier, language)
         }
         Command::Gateway { subcommand } => gateway_srv.handle(cmd.format, &auth, subcommand).await,
+        #[cfg(feature = "stubgen")]
+        Command::Stubgen { subcommand } => match subcommand {
+            golem_wasm_rpc_stubgen::Command::Generate(args) => {
+                golem_wasm_rpc_stubgen::generate(args)
+                    .map_err(|err| GolemError(format!("{err}")))
+                    .map(|res| GolemResult::Ok(Box::new(res)))
+            }
+            golem_wasm_rpc_stubgen::Command::Build(args) => golem_wasm_rpc_stubgen::build(args)
+                .await
+                .map_err(|err| GolemError(format!("{err}")))
+                .map(|res| GolemResult::Ok(Box::new(res))),
+            golem_wasm_rpc_stubgen::Command::AddStubDependency(args) => {
+                golem_wasm_rpc_stubgen::add_stub_dependency(args)
+                    .map_err(|err| GolemError(format!("{err}")))
+                    .map(|res| GolemResult::Ok(Box::new(res)))
+            }
+            golem_wasm_rpc_stubgen::Command::Compose(args) => golem_wasm_rpc_stubgen::compose(args)
+                .map_err(|err| GolemError(format!("{err}")))
+                .map(|res| GolemResult::Ok(Box::new(res))),
+            golem_wasm_rpc_stubgen::Command::InitializeWorkspace(args) => {
+                golem_wasm_rpc_stubgen::initialize_workspace(args)
+                    .map_err(|err| GolemError(format!("{err}")))
+                    .map(|res| GolemResult::Ok(Box::new(res)))
+            }
+        },
     };
 
     match res {
