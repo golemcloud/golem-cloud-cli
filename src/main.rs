@@ -71,48 +71,65 @@ pub fn parse_key_val(
 #[derive(Subcommand, Debug)]
 #[command()]
 enum Command {
+    /// Upload and manage Golem templates
     #[command()]
     Template {
         #[command(subcommand)]
         subcommand: TemplateSubcommand,
     },
+
+    /// Manage Golem workers
     #[command()]
     Worker {
         #[command(subcommand)]
         subcommand: WorkerSubcommand,
     },
+
+    /// Manage accounts
     #[command()]
     Account {
+        /// The account ID to operate on
         #[arg(short = 'A', long)]
         account_id: Option<AccountId>,
 
         #[command(subcommand)]
         subcommand: AccountSubcommand,
     },
+
+    /// Manage access tokens
     #[command()]
     Token {
+        /// The account ID to operate on
         #[arg(short = 'A', long)]
         account_id: Option<AccountId>,
 
         #[command(subcommand)]
         subcommand: TokenSubcommand,
     },
+
+    /// Manage projects
     #[command()]
     Project {
         #[command(subcommand)]
         subcommand: ProjectSubcommand,
     },
+
+    /// Share a project with another account
     #[command()]
     Share {
+        /// Project to be shared
         #[command(flatten)]
         project_ref: ProjectRef,
 
+        /// User account the project will be shared with
         #[arg(long)]
         recipient_account_id: AccountId,
 
+        /// The sharing policy's identifier. If not provided, use `--project-actions` instead
         #[arg(long, required = true, conflicts_with = "project_actions")]
         project_policy_id: Option<ProjectPolicyId>,
 
+        /// A list of actions to be granted to the recipient account. If not provided, use `--project-policy-id` instead
         #[arg(
             short = 'A',
             long,
@@ -121,27 +138,36 @@ enum Command {
         )]
         project_actions: Option<Vec<ProjectAction>>,
     },
+
+    /// Manage project sharing policies
     #[command()]
     ProjectPolicy {
         #[command(subcommand)]
         subcommand: ProjectPolicySubcommand,
     },
+    /// Create a new Golem template from built-in examples
     #[command()]
     New {
+        /// Name of the example to use
         #[arg(short, long)]
         example: ExampleName,
 
+        /// The new template's name
         #[arg(short, long)]
         template_name: golem_examples::model::TemplateName,
 
+        /// The package name of the generated template (in namespace:name format)
         #[arg(short, long)]
         package_name: Option<PackageName>,
     },
+    /// Lists the built-in examples available for creating new templates
     #[command()]
     ListExamples {
+        /// The minimum language tier to include in the list
         #[arg(short, long)]
         min_tier: Option<GuestLanguageTier>,
 
+        /// Filter examples by a given guest language
         #[arg(short, long)]
         language: Option<GuestLanguage>,
     },
@@ -150,6 +176,8 @@ enum Command {
         #[command(subcommand)]
         subcommand: GatewaySubcommand,
     },
+
+    /// WASM RPC stub generator
     #[cfg(feature = "stubgen")]
     Stubgen {
         #[command(subcommand)]

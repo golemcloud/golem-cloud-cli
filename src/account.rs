@@ -24,31 +24,40 @@ use crate::model::{AccountId, GolemError, GolemResult, Role};
 #[derive(Subcommand, Debug)]
 #[command()]
 pub enum AccountSubcommand {
+    /// Get information about the account
     #[command()]
     Get {},
 
+    /// Update some information about the account
     #[command()]
     Update {
+        /// Set the account's name
         // TODO: validate non-empty
         #[arg(short = 'n', long)]
         account_name: Option<String>,
 
+        /// Set the account's email address
         #[arg(short = 'e', long)]
         account_email: Option<String>,
     },
 
+    /// Add a new account
     #[command()]
     Add {
+        /// The new account's name
         #[arg(short = 'n', long)]
         account_name: String,
 
+        /// The new account's email address
         #[arg(short = 'e', long)]
         account_email: String,
     },
 
+    /// Delete the account
     #[command()]
     Delete {},
 
+    /// Manage the account's roles
     #[command()]
     Grant {
         #[command(subcommand)]
@@ -59,15 +68,18 @@ pub enum AccountSubcommand {
 #[derive(Subcommand, Debug)]
 #[command()]
 pub enum GrantSubcommand {
+    /// Get the roles granted to the account
     #[command()]
     Get {},
 
+    /// Grant a new role to the account
     #[command()]
     Add {
         #[arg(value_name = "ROLE")]
         role: Role,
     },
 
+    /// Remove a role from the account
     #[command()]
     Delete {
         #[arg(value_name = "ROLE")]

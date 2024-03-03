@@ -32,15 +32,19 @@ fn parse_instant(
 #[derive(Subcommand, Debug)]
 #[command()]
 pub enum TokenSubcommand {
+    /// List the existing tokens
     #[command()]
     List {},
 
+    /// Add a new token
     #[command()]
     Add {
+        /// Expiration date of the generated token
         #[arg(long, value_parser = parse_instant, default_value = "2100-01-01T00:00:00Z")]
         expires_at: DateTime<Utc>,
     },
 
+    /// Delete an existing token
     #[command()]
     Delete {
         #[arg(value_name = "TOKEN")]

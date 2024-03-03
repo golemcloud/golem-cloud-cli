@@ -21,15 +21,19 @@ use crate::model::{GolemError, GolemResult, ProjectAction, ProjectPolicyId};
 #[derive(Subcommand, Debug)]
 #[command()]
 pub enum ProjectPolicySubcommand {
+    /// Creates a new project sharing policy
     #[command()]
     Add {
+        /// Name of the policy
         #[arg(long)]
         project_policy_name: String,
 
+        /// List of actions allowed by the policy
         #[arg(value_name = "Actions")]
         project_actions: Vec<ProjectAction>,
     },
 
+    /// Gets the existing project sharing policies
     #[command()]
     Get {
         #[arg(value_name = "ID")]
