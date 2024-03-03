@@ -28,32 +28,42 @@ use crate::model::{
 #[derive(Subcommand, Debug)]
 #[command()]
 pub enum TemplateSubcommand {
+    /// Creates a new template with a given name by uploading the template WASM
     #[command()]
     Add {
+        /// The newly created template's owner project
         #[command(flatten)]
         project_ref: ProjectRef,
 
+        /// Name of the newly created template
         #[arg(short, long)]
         template_name: TemplateName,
 
+        /// The WASM file to be used as a Golem template
         #[arg(value_name = "template-file", value_hint = clap::ValueHint::FilePath)]
         template_file: PathBufOrStdin, // TODO: validate exists
     },
 
+    /// Updates an existing template by uploading a new version of its WASM
     #[command()]
     Update {
+        /// The template name or identifier to update
         #[command(flatten)]
         template_id_or_name: TemplateIdOrName,
 
+        /// The WASM file to be used as as a new version of the Golem template
         #[arg(value_name = "template-file", value_hint = clap::ValueHint::FilePath)]
         template_file: PathBufOrStdin, // TODO: validate exists
     },
 
+    /// Lists the existing templates
     #[command()]
     List {
+        /// The project to list templates from
         #[command(flatten)]
         project_ref: ProjectRef,
 
+        /// Optionally look for only templates matching a given name
         #[arg(short, long)]
         template_name: Option<TemplateName>,
     },

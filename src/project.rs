@@ -22,21 +22,27 @@ use crate::model::{AccountId, GolemError, GolemResult};
 #[derive(Subcommand, Debug)]
 #[command()]
 pub enum ProjectSubcommand {
+    /// Add a new project
     #[command()]
     Add {
+        /// The new project's name
         #[arg(short, long)]
         project_name: String,
 
+        /// The new project's description
         #[arg(short = 't', long)]
         project_description: Option<String>,
     },
 
+    /// Lists existing projects
     #[command()]
     List {
+        /// Optionally filter projects by name
         #[arg(short, long)]
         project_name: Option<String>,
     },
 
+    /// Gets the default project which is used when no explicit project is specified
     #[command()]
     GetDefault {},
 }
