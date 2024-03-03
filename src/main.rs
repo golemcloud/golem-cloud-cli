@@ -385,7 +385,7 @@ async fn async_main(cmd: GolemCommand) -> Result<(), Box<dyn std::error::Error>>
                 .map_err(|err| GolemError(format!("{err}")))
                 .map(|res| GolemResult::Ok(Box::new(res))),
             golem_wasm_rpc_stubgen::Command::InitializeWorkspace(args) => {
-                golem_wasm_rpc_stubgen::initialize_workspace(args)
+                golem_wasm_rpc_stubgen::initialize_workspace(args, "golem-cloud-cli", &["stubgen"])
                     .map_err(|err| GolemError(format!("{err}")))
                     .map(|res| GolemResult::Ok(Box::new(res)))
             }

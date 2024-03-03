@@ -20,7 +20,7 @@ futures-util = "0.3.30"
 golem-cloud-client = "0.0.55"
 golem-gateway-client = "0.0.55"
 golem-examples = "0.1.11"
-golem-wasm-rpc-stubgen = { version = "0.0.9", optional = true }
+golem-wasm-rpc-stubgen = { version = "0.0.10", optional = true }
 http = "1.0.0"
 indoc = "2.0.4"
 itertools = "0.11.0"
