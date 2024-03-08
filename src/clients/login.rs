@@ -14,10 +14,7 @@
 
 use async_trait::async_trait;
 use golem_cloud_client::api::LoginClient as HttpClient;
-use golem_cloud_client::model::OAuth2Data;
-use golem_cloud_client::model::Token;
-use golem_cloud_client::model::TokenSecret;
-use golem_cloud_client::model::UnsafeToken;
+use golem_cloud_client::model::{OAuth2Data, Token, TokenSecret, UnsafeToken};
 use golem_cloud_client::{Context, Security};
 use tracing::info;
 

@@ -14,8 +14,7 @@
 
 use async_trait::async_trait;
 use clap::Subcommand;
-use golem_gateway_client::model::ApiDeployment;
-use golem_gateway_client::model::ApiSite;
+use golem_gateway_client::model::{ApiDeployment, ApiSite};
 
 use crate::clients::gateway::deployment::DeploymentClient;
 use crate::clients::project::ProjectClient;

@@ -13,9 +13,7 @@
 // limitations under the License.
 
 use async_trait::async_trait;
-use golem_cloud_client::model::ProjectActions;
-use golem_cloud_client::model::ProjectPolicy;
-use golem_cloud_client::model::ProjectPolicyData;
+use golem_cloud_client::model::{ProjectActions, ProjectPolicy, ProjectPolicyData};
 use tracing::info;
 
 use crate::clients::action_cli_to_api;

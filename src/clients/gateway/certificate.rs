@@ -13,8 +13,7 @@
 // limitations under the License.
 
 use async_trait::async_trait;
-use golem_gateway_client::model::Certificate;
-use golem_gateway_client::model::CertificateRequest;
+use golem_gateway_client::model::{Certificate, CertificateRequest};
 use uuid::Uuid;
 
 use crate::model::{GolemError, ProjectId};

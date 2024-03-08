@@ -12,11 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use golem_gateway_client::api::ApiCertificateError;
-use golem_gateway_client::api::ApiDefinitionError;
-use golem_gateway_client::api::ApiDeploymentError;
-use golem_gateway_client::api::ApiDomainError;
-use golem_gateway_client::api::HealthcheckError;
+use golem_gateway_client::api::{
+    ApiCertificateError, ApiDefinitionError, ApiDeploymentError, ApiDomainError, HealthcheckError,
+};
 
 pub trait ResponseContentErrorMapper {
     fn map(self) -> String;

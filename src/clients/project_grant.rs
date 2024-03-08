@@ -13,8 +13,7 @@
 // limitations under the License.
 
 use async_trait::async_trait;
-use golem_cloud_client::model::ProjectGrant;
-use golem_cloud_client::model::ProjectGrantDataRequest;
+use golem_cloud_client::model::{ProjectGrant, ProjectGrantDataRequest};
 use tracing::info;
 
 use crate::clients::action_cli_to_api;

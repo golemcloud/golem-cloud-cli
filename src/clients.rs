@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use golem_cloud_client::model::{TokenSecret, UnsafeToken};
+
 use crate::model::{AccountId, ProjectAction};
-use golem_cloud_client::model::TokenSecret;
-use golem_cloud_client::model::UnsafeToken;
 
 pub mod account;
 pub mod errors;

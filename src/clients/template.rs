@@ -15,21 +15,11 @@
 use std::io::Read;
 
 use async_trait::async_trait;
-use golem_cloud_client::model::Export;
-use golem_cloud_client::model::ExportFunction;
-use golem_cloud_client::model::ExportInstance;
-use golem_cloud_client::model::FunctionParameter;
-use golem_cloud_client::model::FunctionResult;
-use golem_cloud_client::model::NameOptionTypePair;
-use golem_cloud_client::model::NameTypePair;
-use golem_cloud_client::model::Template;
-use golem_cloud_client::model::TemplateQuery;
-use golem_cloud_client::model::Type;
-use golem_cloud_client::model::TypeEnum;
-use golem_cloud_client::model::TypeFlags;
-use golem_cloud_client::model::TypeRecord;
-use golem_cloud_client::model::TypeTuple;
-use golem_cloud_client::model::TypeVariant;
+use golem_cloud_client::model::{
+    Export, ExportFunction, ExportInstance, FunctionParameter, FunctionResult, NameOptionTypePair,
+    NameTypePair, ResourceMode, Template, TemplateQuery, Type, TypeEnum, TypeFlags, TypeRecord,
+    TypeTuple, TypeVariant,
+};
 use serde::Serialize;
 use tokio::fs::File;
 use tracing::info;
@@ -168,6 +158,10 @@ fn render_type(typ: &Type) -> String {
         Type::U8 { .. } => "u8".to_string(),
         Type::S8 { .. } => "s8".to_string(),
         Type::Bool { .. } => "bool".to_string(),
+        Type::Handle(handle) => match handle.mode {
+            ResourceMode::Borrowed => format!("&handle<{}>", handle.resource_id),
+            ResourceMode::Owned => format!("handle<{}>", handle.resource_id),
+        },
     }
 }
 
