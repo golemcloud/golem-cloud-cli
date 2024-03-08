@@ -13,9 +13,7 @@
 // limitations under the License.
 
 use async_trait::async_trait;
-use golem_cloud_client::model::Account;
-use golem_cloud_client::model::AccountData;
-use golem_cloud_client::model::Plan;
+use golem_cloud_client::model::{Account, AccountData, Plan};
 use tracing::info;
 
 use crate::model::{AccountId, GolemError};

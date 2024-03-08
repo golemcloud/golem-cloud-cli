@@ -13,8 +13,7 @@
 // limitations under the License.
 
 use async_trait::async_trait;
-use golem_cloud_client::model::Project;
-use golem_cloud_client::model::ProjectDataRequest;
+use golem_cloud_client::model::{Project, ProjectDataRequest};
 use indoc::formatdoc;
 use tracing::info;
 

@@ -12,15 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use golem_cloud_client::api::AccountError;
-use golem_cloud_client::api::GrantError;
-use golem_cloud_client::api::LoginError;
-use golem_cloud_client::api::ProjectError;
-use golem_cloud_client::api::ProjectGrantError;
-use golem_cloud_client::api::ProjectPolicyError;
-use golem_cloud_client::api::TemplateError;
-use golem_cloud_client::api::TokenError;
-use golem_cloud_client::api::WorkerError;
+use golem_cloud_client::api::{
+    AccountError, GrantError, LoginError, ProjectError, ProjectGrantError, ProjectPolicyError,
+    TemplateError, TokenError, WorkerError,
+};
 
 pub trait ResponseContentErrorMapper {
     fn map(self) -> String;

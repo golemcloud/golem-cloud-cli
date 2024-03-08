@@ -13,8 +13,7 @@
 // limitations under the License.
 
 use async_trait::async_trait;
-use golem_gateway_client::model::ApiDomain;
-use golem_gateway_client::model::DomainRequest;
+use golem_gateway_client::model::{ApiDomain, DomainRequest};
 
 use crate::model::{GolemError, ProjectId};
 

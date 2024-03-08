@@ -14,9 +14,7 @@
 
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
-use golem_cloud_client::model::CreateTokenDto;
-use golem_cloud_client::model::Token;
-use golem_cloud_client::model::UnsafeToken;
+use golem_cloud_client::model::{CreateTokenDto, Token, UnsafeToken};
 use tracing::info;
 
 use crate::model::{AccountId, GolemError, TokenId};

@@ -16,12 +16,10 @@ use std::time::Duration;
 
 use async_trait::async_trait;
 use futures_util::{future, pin_mut, SinkExt, StreamExt};
-use golem_cloud_client::model::CallingConvention;
-use golem_cloud_client::model::InvokeParameters;
-use golem_cloud_client::model::InvokeResult;
-use golem_cloud_client::model::VersionedWorkerId;
-use golem_cloud_client::model::WorkerCreationRequest;
-use golem_cloud_client::model::WorkerMetadata;
+use golem_cloud_client::model::{
+    CallingConvention, InvokeParameters, InvokeResult, VersionedWorkerId, WorkerCreationRequest,
+    WorkerMetadata,
+};
 use golem_cloud_client::Context;
 use native_tls::TlsConnector;
 use serde::Deserialize;
