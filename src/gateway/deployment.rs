@@ -36,6 +36,8 @@ pub enum DeploymentSubcommand {
         project_ref: ProjectRef,
         #[arg(short, long, value_name = "api-definition-id", value_hint = clap::ValueHint::Other)]
         definition_id: String,
+        #[arg(short = 'V', long, value_name = "version", value_hint = clap::ValueHint::Other)]
+        version: String,
         #[arg(short = 'H', long, value_name = "site-host", value_hint = clap::ValueHint::Other)]
         host: String,
         #[arg(short, long, value_name = "site-subdomain", value_hint = clap::ValueHint::Other)]
@@ -83,12 +85,14 @@ impl<'p, C: DeploymentClient + Sync + Send, P: ProjectClient + Sync + Send> Depl
             }
             DeploymentSubcommand::Add {
                 project_ref,
+                version,
                 definition_id,
                 host,
                 subdomain,
             } => {
                 let deployment = ApiDeployment {
                     project_id: self.projects.resolve_id_or_default(project_ref).await?.0,
+                    version,
                     api_definition_id: definition_id,
                     site: ApiSite { host, subdomain },
                 };
