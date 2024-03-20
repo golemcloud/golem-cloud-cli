@@ -48,7 +48,7 @@ pub enum DefinitionSubcommand {
         #[arg(value_name = "api-definition-id", value_hint = clap::ValueHint::Other)]
         definition_id: String,
         #[arg(value_name = "version", value_hint = clap::ValueHint::Other)]
-        version: String
+        version: String,
     },
 }
 
@@ -114,7 +114,10 @@ impl<'p, C: DefinitionClient + Sync + Send, P: ProjectClient + Sync + Send> Defi
 
                 Ok(GolemResult::Ok(Box::new(res)))
             }
-            DefinitionSubcommand::Update { project_ref, definition_file } => {
+            DefinitionSubcommand::Update {
+                project_ref,
+                definition_file,
+            } => {
                 let project_id = self.projects.resolve_id_or_default(project_ref).await?;
 
                 let definition = match definition_file.unwrap_or(PathBufOrStdin::Stdin) {
@@ -137,10 +140,13 @@ impl<'p, C: DefinitionClient + Sync + Send, P: ProjectClient + Sync + Send> Defi
             DefinitionSubcommand::Delete {
                 project_ref,
                 definition_id,
-                version
+                version,
             } => {
                 let project_id = self.projects.resolve_id_or_default(project_ref).await?;
-                let res = self.client.delete(project_id, &definition_id, version.as_str()).await?;
+                let res = self
+                    .client
+                    .delete(project_id, &definition_id, version.as_str())
+                    .await?;
                 Ok(GolemResult::Ok(Box::new(res)))
             }
         }
